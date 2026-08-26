@@ -46,6 +46,10 @@
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 
-	<EditUser bind:open={editOpen} {user} onsuccess={closeMenu} />
-	<DeleteUser bind:open={deleteOpen} id={user.id} email={user.email} onsuccess={closeMenu} />
+	<!-- Key by user id: table rows are keyed by index, so without this the
+	     reused component would keep the previous row's form state. -->
+	{#key user.id}
+		<EditUser bind:open={editOpen} {user} onsuccess={closeMenu} />
+		<DeleteUser bind:open={deleteOpen} id={user.id} email={user.email} onsuccess={closeMenu} />
+	{/key}
 </div>

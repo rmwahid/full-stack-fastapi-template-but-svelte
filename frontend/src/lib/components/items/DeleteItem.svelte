@@ -34,7 +34,7 @@
 
 <Dialog.Root bind:open>
 	<Dialog.Content class="sm:max-w-md">
-		<form onsubmit={() => $mutation.mutate(id)} method="POST">
+		<form onsubmit={(e) => { e.preventDefault(); $mutation.mutate(id) }}>
 			<Dialog.Header>
 				<Dialog.Title>Delete Item</Dialog.Title>
 				<Dialog.Description>

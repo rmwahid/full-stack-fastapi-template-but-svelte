@@ -6,3 +6,7 @@ app.egg-info
 htmlcov
 .cache
 .venv
+
+# Backend reads config from the repo-root .env. No backend/.env should ever be
+# committed (unlike root/frontend .env which are tracked dev defaults on purpose).
+.env

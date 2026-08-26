@@ -63,16 +63,17 @@
 			zod4(schema),
 		),
 		{
+			id: user.id,
 			validators: zod4(schema),
-			onSubmit: ({ formData, cancel }) => {
-				cancel()
+			SPA: true,
+			onUpdate: ({ result }) => {
+				if (result.type !== "success") return
 				if ($mutation.isPending) return
-				const entries = Object.fromEntries(formData.entries()) as Record<string, unknown>
 				$mutation.mutate({
-					email: String(entries.email ?? ""),
-					full_name: String(entries.full_name ?? ""),
-					is_superuser: formData.get("is_superuser") === "on" || entries.is_superuser === true,
-					is_active: formData.get("is_active") === "on" || entries.is_active === true,
+					email: $fd.email,
+					full_name: $fd.full_name ?? "",
+					is_superuser: Boolean($fd.is_superuser),
+					is_active: Boolean($fd.is_active),
 				})
 			},
 		},
@@ -87,7 +88,7 @@
 			<Dialog.Title>Edit User</Dialog.Title>
 			<Dialog.Description>Update the user details below.</Dialog.Description>
 		</Dialog.Header>
-		<form onsubmit={form.submit} method="POST">
+		<form method="POST" use:form.enhance>
 			<div class="grid gap-4 py-4">
 				<Form.Field {form} name="full_name">
 					<Form.Control>
@@ -111,12 +112,12 @@
 
 				<label class="flex items-center gap-2 text-sm">
 					<input bind:checked={$fd.is_superuser} type="checkbox" class="size-4 accent-primary" />
-					<span>Superuser</span>
+					<span>Is superuser?</span>
 				</label>
 
 				<label class="flex items-center gap-2 text-sm">
 					<input bind:checked={$fd.is_active} type="checkbox" class="size-4 accent-primary" />
-					<span>Active</span>
+					<span>Is active?</span>
 				</label>
 			</div>
 

@@ -10,6 +10,9 @@ const config = {
 			pages: "../backend/app/frontend",
 			assets: "../backend/app/frontend",
 		}),
+		files: {
+			assets: "public",
+		},
 	},
 };
 

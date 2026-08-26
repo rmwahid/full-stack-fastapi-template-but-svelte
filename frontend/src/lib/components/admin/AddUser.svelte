@@ -15,12 +15,19 @@
 	import { showErrorToast, showSuccessToast } from "$lib/toast"
 	import { handleError } from "$lib/utils"
 
-	const schema = z.object({
-		email: z.email("Invalid email address"),
-		full_name: z.string().min(1, "Full name is required"),
-		password: z.string().min(8, "Password must be at least 8 characters"),
-		is_superuser: z.boolean(),
-	})
+	const schema = z
+		.object({
+			email: z.email("Invalid email address"),
+			full_name: z.string().optional(),
+			password: z.string().min(8, "Password must be at least 8 characters"),
+			confirm_password: z.string().min(1, "Password confirmation is required"),
+			is_superuser: z.boolean(),
+			is_active: z.boolean(),
+		})
+		.refine((data) => data.password === data.confirm_password, {
+			message: "The passwords don't match",
+			path: ["confirm_password"],
+		})
 
 	type FormData = z.infer<typeof schema>
 
@@ -39,18 +46,30 @@
 	})
 
 	const form = superForm<FormData>(
-		defaults({ email: "", full_name: "", password: "", is_superuser: false }, zod4(schema)),
+		defaults(
+			{
+				email: "",
+				full_name: "",
+				password: "",
+				confirm_password: "",
+				is_superuser: false,
+				is_active: true,
+			},
+			zod4(schema),
+		),
 		{
+			id: "admin-add-user",
 			validators: zod4(schema),
-			onSubmit: ({ formData, cancel }) => {
-				cancel()
+			SPA: true,
+			onUpdate: ({ result }) => {
+				if (result.type !== "success") return
 				if ($mutation.isPending) return
-				const entries = Object.fromEntries(formData.entries()) as Record<string, unknown>
 				$mutation.mutate({
-					email: String(entries.email ?? ""),
-					full_name: String(entries.full_name ?? ""),
-					password: String(entries.password ?? ""),
-					is_superuser: formData.get("is_superuser") === "on" || entries.is_superuser === true,
+					email: $fd.email,
+					full_name: $fd.full_name,
+					password: $fd.password,
+					is_superuser: Boolean($fd.is_superuser),
+					is_active: Boolean($fd.is_active),
 				})
 			},
 		},
@@ -70,7 +89,7 @@
 			<Dialog.Title>Add User</Dialog.Title>
 			<Dialog.Description>Create a new user account.</Dialog.Description>
 		</Dialog.Header>
-		<form onsubmit={form.submit} method="POST">
+		<form method="POST" use:form.enhance>
 			<div class="grid gap-4 py-4">
 				<Form.Field {form} name="full_name">
 					<Form.Control>
@@ -102,9 +121,24 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
+				<Form.Field {form} name="confirm_password">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Form.Label>Confirm Password <span class="text-destructive">*</span></Form.Label>
+							<PasswordInput {...props} bind:value={$fd.confirm_password} placeholder="Password" />
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+
 				<label class="flex items-center gap-2 text-sm">
 					<input bind:checked={$fd.is_superuser} type="checkbox" class="size-4 accent-primary" />
-					<span>Superuser</span>
+					<span>Is superuser?</span>
+				</label>
+
+				<label class="flex items-center gap-2 text-sm">
+					<input bind:checked={$fd.is_active} type="checkbox" class="size-4 accent-primary" />
+					<span>Is active?</span>
 				</label>
 			</div>
 

@@ -2,6 +2,8 @@
 **/__pycache__
 **/.venv
 backend/htmlcov
+frontend/.env
+frontend/.svelte-kit
 frontend/blob-report
 frontend/dist
 frontend/node_modules

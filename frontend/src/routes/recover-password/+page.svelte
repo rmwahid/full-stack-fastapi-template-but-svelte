@@ -33,11 +33,11 @@
 
 	const form = superForm<FormData>(defaults(zod4(schema)), {
 		validators: zod4(schema),
-		onSubmit: ({ formData, cancel }) => {
-			cancel()
+		SPA: true,
+		onUpdate: ({ result }) => {
+			if (result.type !== "success") return
 			if ($recoverPassword.isPending) return
-			const { email } = Object.fromEntries(formData.entries()) as { email: string }
-			$recoverPassword.mutate({ email })
+			$recoverPassword.mutate({ email: $fd.email })
 		},
 	})
 
@@ -58,7 +58,7 @@
 			<a href="/login" class="text-sm underline underline-offset-4">Back to log in</a>
 		</div>
 	{:else}
-		<form onsubmit={form.submit} method="POST" class="flex flex-col gap-4">
+		<form method="POST" use:form.enhance class="flex flex-col gap-4">
 			<h1 class="text-center text-2xl font-bold">Password Recovery</h1>
 			<p class="text-muted-foreground -mt-3 text-center text-sm">
 				A password recovery email will be sent to the registered account.
@@ -67,7 +67,7 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Email</Form.Label>
-						<Input {...props} bind:value={$fd.email} placeholder="Email" type="email" />
+						<Input {...props} bind:value={$fd.email} data-testid="email-input" placeholder="Email" type="email" />
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors class="text-xs" />

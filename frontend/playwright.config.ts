@@ -1,4 +1,4 @@
-import { defineConfig, devices } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test"
 
 export default defineConfig({
 	testDir: "./tests",
@@ -12,11 +12,18 @@ export default defineConfig({
 	use: {
 		baseURL: process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:8000",
 		trace: "on-first-retry",
+		storageState: "playwright/.auth/user.json",
 	},
 	projects: [
 		{
+			name: "setup",
+			testMatch: /auth\.setup\.ts/,
+			use: { storageState: { cookies: [], origins: [] } },
+		},
+		{
 			name: "chromium",
 			use: { ...devices["Desktop Chrome"] },
+			dependencies: ["setup"],
 		},
 	],
-});
+})

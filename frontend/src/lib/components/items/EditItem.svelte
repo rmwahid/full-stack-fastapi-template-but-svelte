@@ -50,11 +50,16 @@
 	const form = superForm<FormData>(
 		defaults({ title: item.title, description: item.description ?? "" }, zod4(schema)),
 		{
+			id: item.id,
 			validators: zod4(schema),
-			onSubmit: ({ formData, cancel }) => {
-				cancel()
+			SPA: true,
+			onUpdate: ({ result }) => {
+				if (result.type !== "success") return
 				if ($mutation.isPending) return
-				$mutation.mutate(Object.fromEntries(formData.entries()) as unknown as FormData)
+				$mutation.mutate({
+					title: $fd.title,
+					description: $fd.description ?? "",
+				})
 			},
 		},
 	)
@@ -68,7 +73,7 @@
 			<Dialog.Title>Edit Item</Dialog.Title>
 			<Dialog.Description>Update the item details below.</Dialog.Description>
 		</Dialog.Header>
-		<form onsubmit={form.submit} method="POST">
+		<form method="POST" use:form.enhance>
 			<div class="grid gap-4 py-4">
 				<Form.Field {form} name="title">
 					<Form.Control>

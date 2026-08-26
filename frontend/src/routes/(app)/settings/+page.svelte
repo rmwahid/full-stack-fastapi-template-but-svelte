@@ -1,5 +1,4 @@
 ﻿<script lang="ts">
-	import Appearance from "$lib/components/common/Appearance.svelte"
 	import ChangePassword from "$lib/components/usersettings/ChangePassword.svelte"
 	import DeleteAccount from "$lib/components/usersettings/DeleteAccount.svelte"
 	import UserInformation from "$lib/components/usersettings/UserInformation.svelte"
@@ -38,10 +37,5 @@
 				<DeleteAccount />
 			</Tabs.Content>
 		</Tabs.Root>
-
-		<div class="max-w-sm">
-			<div class="text-muted-foreground mb-2 text-sm font-medium">Appearance</div>
-			<Appearance />
-		</div>
 	</div>
 {/if}

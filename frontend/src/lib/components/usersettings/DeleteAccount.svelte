@@ -40,7 +40,7 @@
 
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Content class="sm:max-w-md">
-		<form onsubmit={() => $mutation.mutate()} method="POST">
+		<form onsubmit={(e) => { e.preventDefault(); $mutation.mutate() }}>
 			<Dialog.Header>
 				<Dialog.Title>Delete Account</Dialog.Title>
 				<Dialog.Description>

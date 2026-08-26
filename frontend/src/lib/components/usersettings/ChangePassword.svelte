@@ -23,8 +23,12 @@
 			confirm_password: z.string().min(1, "Please confirm your password"),
 		})
 		.refine((data) => data.new_password === data.confirm_password, {
-			message: "Passwords do not match",
+			message: "The passwords don't match",
 			path: ["confirm_password"],
+		})
+		.refine((data) => data.new_password !== data.current_password, {
+			message: "New password cannot be the same as the current one",
+			path: ["new_password"],
 		})
 
 	type FormData = z.infer<typeof schema>
@@ -52,13 +56,13 @@
 		),
 		{
 			validators: zod4(schema),
-			onSubmit: ({ formData, cancel }) => {
-				cancel()
+			SPA: true,
+			onUpdate: ({ result }) => {
+				if (result.type !== "success") return
 				if ($mutation.isPending) return
-				const values = Object.fromEntries(formData.entries()) as unknown as FormData
 				$mutation.mutate({
-					current_password: values.current_password,
-					new_password: values.new_password,
+					current_password: $fd.current_password,
+					new_password: $fd.new_password,
 				})
 			},
 		},
@@ -73,12 +77,12 @@
 		<Card.Description>Update your password</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		<form onsubmit={form.submit} method="POST" class="flex flex-col gap-4">
+		<form method="POST" use:form.enhance class="flex flex-col gap-4">
 			<Form.Field {form} name="current_password">
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Current Password <span class="text-destructive">*</span></Form.Label>
-						<PasswordInput {...props} bind:value={$fd.current_password} placeholder="Current password" />
+						<PasswordInput {...props} bind:value={$fd.current_password} data-testid="current-password-input" placeholder="Current password" />
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors class="text-xs" />
@@ -88,7 +92,7 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Set New Password <span class="text-destructive">*</span></Form.Label>
-						<PasswordInput {...props} bind:value={$fd.new_password} placeholder="New password" />
+						<PasswordInput {...props} bind:value={$fd.new_password} data-testid="new-password-input" placeholder="New password" />
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors class="text-xs" />
@@ -98,14 +102,14 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Confirm New Password <span class="text-destructive">*</span></Form.Label>
-						<PasswordInput {...props} bind:value={$fd.confirm_password} placeholder="Confirm new password" />
+						<PasswordInput {...props} bind:value={$fd.confirm_password} data-testid="confirm-password-input" placeholder="Confirm new password" />
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors class="text-xs" />
 			</Form.Field>
 
 			<div class="flex justify-end">
-				<LoadingButton type="submit" loading={$mutation.isPending}>Save</LoadingButton>
+				<LoadingButton type="submit" loading={$mutation.isPending}>Update Password</LoadingButton>
 			</div>
 		</form>
 	</Card.Content>

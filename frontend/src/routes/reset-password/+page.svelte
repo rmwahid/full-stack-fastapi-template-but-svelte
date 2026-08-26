@@ -43,11 +43,11 @@
 
 	const form = superForm<FormData>(defaults(zod4(schema)), {
 		validators: zod4(schema),
-		onSubmit: ({ formData, cancel }) => {
-			cancel()
+		SPA: true,
+		onUpdate: ({ result }) => {
+			if (result.type !== "success") return
 			if ($resetPassword.isPending) return
-			const values = Object.fromEntries(formData.entries()) as unknown as FormData
-			$resetPassword.mutate({ new_password: values.new_password, token })
+			$resetPassword.mutate({ new_password: $fd.new_password, token })
 		},
 	})
 
@@ -59,7 +59,7 @@
 </svelte:head>
 
 <AuthLayout>
-	<form onsubmit={form.submit} method="POST" class="flex flex-col gap-4">
+	<form method="POST" use:form.enhance class="flex flex-col gap-4">
 		<h1 class="text-center text-2xl font-bold">Reset Password</h1>
 		<p class="text-muted-foreground -mt-3 text-center text-sm">
 			Please enter your new password below.
@@ -69,7 +69,7 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>New password</Form.Label>
-					<PasswordInput {...props} bind:value={$fd.new_password} placeholder="New password" />
+					<PasswordInput {...props} bind:value={$fd.new_password} data-testid="new-password-input" placeholder="New password" />
 				{/snippet}
 			</Form.Control>
 			<Form.FieldErrors class="text-xs" />
@@ -79,7 +79,7 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>Confirm password</Form.Label>
-					<PasswordInput {...props} bind:value={$fd.confirm_password} placeholder="Confirm password" />
+					<PasswordInput {...props} bind:value={$fd.confirm_password} data-testid="confirm-password-input" placeholder="Confirm password" />
 				{/snippet}
 			</Form.Control>
 			<Form.FieldErrors class="text-xs" />

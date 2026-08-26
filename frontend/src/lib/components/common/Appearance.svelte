@@ -18,7 +18,7 @@
 				</Button>
 			{/snippet}
 		</DropdownMenu.Trigger>
-		<DropdownMenu.Content align="end">
+		<DropdownMenu.Content preventScroll={false} align="end">
 			<DropdownMenu.Item data-testid="light-mode" onclick={() => setMode("light")}>
 				<Sun class="mr-2 h-4 w-4" />
 				Light

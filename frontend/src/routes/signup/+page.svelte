@@ -11,14 +11,20 @@
 	import LoadingButton from "$lib/components/ui/loading-button.svelte"
 	import PasswordInput from "$lib/components/ui/password-input.svelte"
 
-	const schema = z.object({
-		full_name: z.string().min(1, "Full name is required"),
-		email: z.email("Invalid email address"),
-		password: z
-			.string()
-			.min(1, "Password is required")
-			.min(8, "Password must be at least 8 characters"),
-	})
+	const schema = z
+		.object({
+			full_name: z.string().min(1, "Full Name is required"),
+			email: z.email("Invalid email address"),
+			password: z
+				.string()
+				.min(1, "Password is required")
+				.min(8, "Password must be at least 8 characters"),
+			confirm_password: z.string().min(1, "Password confirmation is required"),
+		})
+		.refine((data) => data.password === data.confirm_password, {
+			message: "The passwords don't match",
+			path: ["confirm_password"],
+		})
 
 	type FormData = z.infer<typeof schema>
 
@@ -26,10 +32,15 @@
 
 	const form = superForm<FormData>(defaults(zod4(schema)), {
 		validators: zod4(schema),
-		onSubmit: ({ formData, cancel }) => {
-			cancel()
+		SPA: true,
+		onUpdate: ({ result }) => {
+			if (result.type !== "success") return
 			if ($signUpMutation.isPending) return
-			$signUpMutation.mutate(Object.fromEntries(formData.entries()) as unknown as UserRegister)
+			$signUpMutation.mutate({
+				full_name: $fd.full_name,
+				email: $fd.email,
+				password: $fd.password,
+			} as unknown as UserRegister)
 		},
 	})
 
@@ -42,12 +53,12 @@
 
 <AuthLayout>
 	<h1 class="mb-4 text-center text-2xl font-bold">Sign Up</h1>
-	<form onsubmit={form.submit} method="POST" class="flex flex-col gap-4">
+	<form method="POST" use:form.enhance class="flex flex-col gap-4">
 		<Form.Field {form} name="full_name">
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>Full name</Form.Label>
-					<Input {...props} bind:value={$fd.full_name} placeholder="Full name" type="text" />
+					<Input {...props} bind:value={$fd.full_name} data-testid="full-name-input" placeholder="Full name" type="text" />
 				{/snippet}
 			</Form.Control>
 			<Form.FieldErrors class="text-xs" />
@@ -57,7 +68,7 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>Email</Form.Label>
-					<Input {...props} bind:value={$fd.email} placeholder="Email" type="email" />
+					<Input {...props} bind:value={$fd.email} data-testid="email-input" placeholder="Email" type="email" />
 				{/snippet}
 			</Form.Control>
 			<Form.FieldErrors class="text-xs" />
@@ -67,7 +78,17 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>Password</Form.Label>
-					<PasswordInput {...props} bind:value={$fd.password} placeholder="Password" />
+					<PasswordInput {...props} bind:value={$fd.password} data-testid="password-input" placeholder="Password" />
+				{/snippet}
+			</Form.Control>
+			<Form.FieldErrors class="text-xs" />
+		</Form.Field>
+
+		<Form.Field {form} name="confirm_password">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Confirm Password</Form.Label>
+					<PasswordInput {...props} bind:value={$fd.confirm_password} data-testid="confirm-password-input" placeholder="Confirm Password" />
 				{/snippet}
 			</Form.Control>
 			<Form.FieldErrors class="text-xs" />

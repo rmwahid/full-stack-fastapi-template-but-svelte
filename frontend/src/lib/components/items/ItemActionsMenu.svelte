@@ -48,6 +48,10 @@
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 
-	<EditItem bind:open={editOpen} {item} onsuccess={closeMenu} />
-	<DeleteItem bind:open={deleteOpen} id={item.id} onsuccess={closeMenu} />
+	<!-- Key by item id: table rows are keyed by index, so without this the
+	     reused component would keep the previous row's form state. -->
+	{#key item.id}
+		<EditItem bind:open={editOpen} {item} onsuccess={closeMenu} />
+		<DeleteItem bind:open={deleteOpen} id={item.id} onsuccess={closeMenu} />
+	{/key}
 </div>

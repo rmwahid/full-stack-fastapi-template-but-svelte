@@ -36,11 +36,16 @@
 	})
 
 	const form = superForm<FormData>(defaults(zod4(schema)), {
+		id: "add-item",
 		validators: zod4(schema),
-		onSubmit: ({ formData, cancel }) => {
-			cancel()
+		SPA: true,
+		onUpdate: ({ result }) => {
+			if (result.type !== "success") return
 			if ($mutation.isPending) return
-			$mutation.mutate(Object.fromEntries(formData.entries()) as unknown as ItemCreate)
+			$mutation.mutate({
+				title: $fd.title,
+				description: $fd.description ?? "",
+			} as unknown as ItemCreate)
 		},
 	})
 
@@ -60,13 +65,13 @@
 			<Dialog.Title>Add Item</Dialog.Title>
 			<Dialog.Description>Fill in the details to add a new item.</Dialog.Description>
 		</Dialog.Header>
-		<form onsubmit={form.submit} method="POST">
+		<form method="POST" use:form.enhance>
 			<div class="grid gap-4 py-4">
 				<Form.Field {form} name="title">
 					<Form.Control>
 						{#snippet children({ props })}
 							<Form.Label>Title <span class="text-destructive">*</span></Form.Label>
-							<Input {...props} bind:value={$fd.title} placeholder="Title" type="text" />
+							<Input {...props} bind:value={$fd.title} onblur={() => form.validate("title")} placeholder="Title" type="text" />
 						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />

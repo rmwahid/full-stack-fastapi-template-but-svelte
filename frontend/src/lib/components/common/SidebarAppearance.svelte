@@ -26,6 +26,7 @@
 			{/snippet}
 		</DropdownMenu.Trigger>
 		<DropdownMenu.Content
+			preventScroll={false}
 			side={sidebar.isMobile ? "top" : "right"}
 			align="end"
 			class="w-(--bits-dropdown-menu-anchor-width) min-w-56"

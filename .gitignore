@@ -1,4 +1,4 @@
-.vscode/*
+﻿.vscode/*
 !.vscode/extensions.json
 node_modules/
 backend/app/frontend/
@@ -7,3 +7,8 @@ backend/app/frontend/
 /blob-report/
 /playwright/.cache/
 packages/email/.bse-cache/
+
+# SECURITY NOTE: .env files are still tracked on purpose (dev defaults only,
+# upstream template style). Before any real deployment, uncomment the lines below and
+# create .env.example templates so real secrets can never be committed.
+# /.env

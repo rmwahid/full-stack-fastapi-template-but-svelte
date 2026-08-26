@@ -23,10 +23,14 @@
 
 	const form = superForm<FormData>(defaults(zod4(schema)), {
 		validators: zod4(schema),
-		onSubmit: ({ formData, cancel }) => {
-			cancel()
+		SPA: true,
+		onUpdate: ({ result }) => {
+			if (result.type !== "success") return
 			if ($loginMutation.isPending) return
-			$loginMutation.mutate(Object.fromEntries(formData.entries()) as unknown as Body_login_login_access_token)
+			$loginMutation.mutate({
+				username: $fd.username,
+				password: $fd.password,
+			} as unknown as Body_login_login_access_token)
 		},
 	})
 
@@ -38,7 +42,7 @@
 </svelte:head>
 
 <AuthLayout>
-	<form onsubmit={form.submit} method="POST" class="flex flex-col gap-6">
+	<form method="POST" use:form.enhance class="flex flex-col gap-6">
 		<div class="flex flex-col items-center gap-2 text-center">
 			<h1 class="text-2xl font-bold">Login to your account</h1>
 		</div>

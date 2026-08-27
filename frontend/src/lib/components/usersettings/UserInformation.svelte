@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
 	import { createMutation, useQueryClient } from "@tanstack/svelte-query"
 	import { z } from "zod"
 	import { defaults, superForm } from "sveltekit-superforms"
@@ -7,7 +7,6 @@
 	import type { UserPublic, UserUpdateMe } from "$lib/client"
 	import { UsersService } from "$lib/client"
 	import { Button } from "$lib/components/ui/button"
-	import * as Card from "$lib/components/ui/card"
 	import * as Form from "$lib/components/ui/form"
 	import Input from "$lib/components/ui/input/input.svelte"
 	import LoadingButton from "$lib/components/ui/loading-button.svelte"
@@ -21,9 +20,10 @@
 
 	type FormData = z.infer<typeof schema>
 
-	let editing = $state(false)
+	let { user }: { user: UserPublic } = $props()
 
-	let { user }: { user: UserPublic } = $props();
+	let editing = $state(false)
+	let dirty = $state(false)
 
 	const queryClient = useQueryClient()
 
@@ -42,6 +42,8 @@
 		{
 			validators: zod4(schema),
 			SPA: true,
+			// Mirrors React's formState.isDirty: Save stays disabled until a field changes.
+			onChange: () => (dirty = true),
 			onUpdate: ({ result }) => {
 				if (result.type !== "success") return
 				if ($mutation.isPending) return
@@ -54,64 +56,67 @@
 	)
 
 	const fd = form.form
+	const errors = form.errors
 
 	function startEdit() {
 		form.reset({ newState: { full_name: user.full_name ?? "", email: user.email } })
+		dirty = false
 		editing = true
 	}
 
 	function cancelEdit() {
 		form.reset({ newState: { full_name: user.full_name ?? "", email: user.email } })
+		dirty = false
 		editing = false
 	}
 </script>
 
-<Card.Root>
-	<Card.Header>
-		<Card.Title>User Information</Card.Title>
-		<Card.Description>Update your account information</Card.Description>
-	</Card.Header>
-	<Card.Content>
-		<form method="POST" use:form.enhance class="flex flex-col gap-4">
-			<Form.Field {form} name="email">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Email</Form.Label>
-						{#if editing}
-							<Input {...props} bind:value={$fd.email} placeholder="Email" type="email" />
-							<Form.FieldErrors class="text-xs" />
-						{:else}
-							<p class="py-2">{user.email}</p>
+<div class="max-w-md">
+	<h3 class="py-4 text-lg font-semibold">User Information</h3>
+	<form method="POST" use:form.enhance class="flex flex-col gap-4">
+		<Form.Field {form} name="full_name">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Full name</Form.Label>
+					{#if editing}
+						<Input {...props} bind:value={$fd.full_name} placeholder="Full name" type="text" />
+						{#if $errors.full_name}
+							<p class="text-xs font-medium text-destructive">{$errors.full_name[0]}</p>
 						{/if}
-					{/snippet}
-				</Form.Control>
-			</Form.Field>
+					{:else}
+						<p class="max-w-sm truncate py-2 {!user.full_name ? 'text-muted-foreground' : ''}">
+							{user.full_name || "N/A"}
+						</p>
+					{/if}
+				{/snippet}
+			</Form.Control>
+		</Form.Field>
 
-			<Form.Field {form} name="full_name">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Full name</Form.Label>
-						{#if editing}
-							<Input {...props} bind:value={$fd.full_name} placeholder="Full name" type="text" />
-							<Form.FieldErrors class="text-xs" />
-						{:else}
-							<p class="py-2">{user.full_name}</p>
+		<Form.Field {form} name="email">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Email</Form.Label>
+					{#if editing}
+						<Input {...props} bind:value={$fd.email} placeholder="Email" type="email" />
+						{#if $errors.email}
+							<p class="text-xs font-medium text-destructive">{$errors.email[0]}</p>
 						{/if}
-					{/snippet}
-				</Form.Control>
-			</Form.Field>
+					{:else}
+						<p class="max-w-sm truncate py-2">{user.email}</p>
+					{/if}
+				{/snippet}
+			</Form.Control>
+		</Form.Field>
 
-			<div class="flex items-center gap-2">
-				{#if editing}
-					<Button type="button" variant="outline" onclick={cancelEdit} disabled={$mutation.isPending}>
-						Cancel
-					</Button>
-					<LoadingButton type="submit" loading={$mutation.isPending}>Save</LoadingButton>
-				{:else}
-					<a href="/" class="mr-auto text-sm underline underline-offset-4">Back to dashboard</a>
-					<Button type="button" onclick={startEdit}>Edit</Button>
-				{/if}
-			</div>
-		</form>
-	</Card.Content>
-</Card.Root>
+		<div class="flex gap-3">
+			{#if editing}
+				<LoadingButton type="submit" loading={$mutation.isPending} disabled={!dirty}>Save</LoadingButton>
+				<Button type="button" variant="outline" onclick={cancelEdit} disabled={$mutation.isPending}>
+					Cancel
+				</Button>
+			{:else}
+				<Button type="button" onclick={startEdit}>Edit</Button>
+			{/if}
+		</div>
+	</form>
+</div>

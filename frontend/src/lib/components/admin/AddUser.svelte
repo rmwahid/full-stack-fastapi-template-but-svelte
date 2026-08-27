@@ -3,6 +3,7 @@
 	import { z } from "zod"
 	import { defaults, superForm } from "sveltekit-superforms"
 	import { zod4 } from "sveltekit-superforms/adapters"
+	import Plus from "@lucide/svelte/icons/plus"
 
 	import type { UserCreate } from "$lib/client"
 	import { UsersService } from "$lib/client"
@@ -32,6 +33,7 @@
 	type FormData = z.infer<typeof schema>
 
 	let open = $state(false)
+
 	const queryClient = useQueryClient()
 
 	const mutation = createMutation({
@@ -76,12 +78,16 @@
 	)
 
 	const fd = form.form
+	const errors = form.errors
 </script>
 
 <Dialog.Root bind:open>
 	<Dialog.Trigger>
 		{#snippet child({ props })}
-			<Button {...props}>Add User</Button>
+			<Button {...props} class="my-4">
+				<Plus class="mr-2" />
+				Add User
+			</Button>
 		{/snippet}
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-md">
@@ -98,7 +104,9 @@
 							<Input {...props} bind:value={$fd.full_name} placeholder="Full name" type="text" />
 						{/snippet}
 					</Form.Control>
-					<Form.FieldErrors />
+					{#if $errors.full_name}
+						<p class="text-xs font-medium text-destructive">{$errors.full_name[0]}</p>
+					{/if}
 				</Form.Field>
 
 				<Form.Field {form} name="email">
@@ -108,7 +116,9 @@
 							<Input {...props} bind:value={$fd.email} placeholder="Email" type="email" />
 						{/snippet}
 					</Form.Control>
-					<Form.FieldErrors />
+					{#if $errors.email}
+						<p class="text-xs font-medium text-destructive">{$errors.email[0]}</p>
+					{/if}
 				</Form.Field>
 
 				<Form.Field {form} name="password">
@@ -118,7 +128,9 @@
 							<PasswordInput {...props} bind:value={$fd.password} placeholder="Password" />
 						{/snippet}
 					</Form.Control>
-					<Form.FieldErrors />
+					{#if $errors.password}
+						<p class="text-xs font-medium text-destructive">{$errors.password[0]}</p>
+					{/if}
 				</Form.Field>
 
 				<Form.Field {form} name="confirm_password">
@@ -128,7 +140,9 @@
 							<PasswordInput {...props} bind:value={$fd.confirm_password} placeholder="Password" />
 						{/snippet}
 					</Form.Control>
-					<Form.FieldErrors />
+					{#if $errors.confirm_password}
+						<p class="text-xs font-medium text-destructive">{$errors.confirm_password[0]}</p>
+					{/if}
 				</Form.Field>
 
 				<label class="flex items-center gap-2 text-sm">

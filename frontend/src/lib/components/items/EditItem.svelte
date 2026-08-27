@@ -22,16 +22,12 @@
 	type FormData = z.infer<typeof schema>
 
 	interface Props {
-		item: ItemPublic;
-		open?: boolean;
-		onsuccess?: () => void;
+		item: ItemPublic
+		open?: boolean
+		onSuccess?: () => void
 	}
 
-	let {
-		item,
-		open = $bindable(false),
-		onsuccess,
-	}: Props = $props();
+	let { item, open = $bindable(false), onSuccess }: Props = $props()
 
 	const queryClient = useQueryClient()
 
@@ -41,7 +37,7 @@
 		onSuccess: () => {
 			showSuccessToast("Item updated successfully")
 			open = false
-			onsuccess?.()
+			onSuccess?.()
 		},
 		onError: (error) => handleError(error, showErrorToast),
 		onSettled: () => queryClient.invalidateQueries({ queryKey: ["items"] }),
@@ -65,6 +61,7 @@
 	)
 
 	const fd = form.form
+	const errors = form.errors
 </script>
 
 <Dialog.Root bind:open>
@@ -82,7 +79,9 @@
 							<Input {...props} bind:value={$fd.title} placeholder="Title" type="text" />
 						{/snippet}
 					</Form.Control>
-					<Form.FieldErrors />
+					{#if $errors.title}
+						<p class="text-xs font-medium text-destructive">{$errors.title[0]}</p>
+					{/if}
 				</Form.Field>
 
 				<Form.Field {form} name="description">
@@ -92,7 +91,9 @@
 							<Input {...props} bind:value={$fd.description} placeholder="Description" type="text" />
 						{/snippet}
 					</Form.Control>
-					<Form.FieldErrors />
+					{#if $errors.description}
+						<p class="text-xs font-medium text-destructive">{$errors.description[0]}</p>
+					{/if}
 				</Form.Field>
 			</div>
 

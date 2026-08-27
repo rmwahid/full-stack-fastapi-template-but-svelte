@@ -1,14 +1,14 @@
-﻿<script lang="ts" generics="TData extends RowData">
+﻿<script lang="ts" generics="TData extends RowData & { id: string }">
 	import { createTable, FlexRender, type ColumnDef, type RowData } from "@tanstack/svelte-table"
-	import ChevronLeft from "@lucide/svelte/icons/chevron-left";
-	import ChevronRight from "@lucide/svelte/icons/chevron-right";
-	import ChevronsLeft from "@lucide/svelte/icons/chevrons-left";
-	import ChevronsRight from "@lucide/svelte/icons/chevrons-right";
+	import ChevronLeft from "@lucide/svelte/icons/chevron-left"
+	import ChevronRight from "@lucide/svelte/icons/chevron-right"
+	import ChevronsLeft from "@lucide/svelte/icons/chevrons-left"
+	import ChevronsRight from "@lucide/svelte/icons/chevrons-right"
 
-	import type { PaginatedFeatures } from "./table-features";
-	import { paginatedFeatures } from "./table-features";
-	import Button from "$lib/components/ui/button/button.svelte";
-	import * as Select from "$lib/components/ui/select";
+	import type { PaginatedFeatures } from "./table-features"
+	import { paginatedFeatures } from "./table-features"
+	import Button from "$lib/components/ui/button/button.svelte"
+	import * as Select from "$lib/components/ui/select"
 	import {
 		Table,
 		TableBody,
@@ -16,14 +16,14 @@
 		TableHead,
 		TableHeader,
 		TableRow,
-	} from "$lib/components/ui/table";
+	} from "$lib/components/ui/table"
 
 	interface Props {
-		columns: ColumnDef<PaginatedFeatures, TData>[];
-		data: TData[];
+		columns: ColumnDef<PaginatedFeatures, TData>[]
+		data: TData[]
 	}
 
-	let { columns, data }: Props = $props();
+	let { columns, data }: Props = $props()
 
 	const table = createTable({
 		features: paginatedFeatures,
@@ -53,7 +53,7 @@
 		</TableHeader>
 		<TableBody>
 			{#if table.getRowModel().rows.length}
-				{#each table.getRowModel().rows as row (row.id)}
+				{#each table.getRowModel().rows as row (row.original.id)}
 					<TableRow>
 						{#each row.getAllCells() as cell (cell.id)}
 							<TableCell>

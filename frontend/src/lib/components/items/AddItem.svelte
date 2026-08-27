@@ -3,6 +3,7 @@
 	import { z } from "zod"
 	import { defaults, superForm } from "sveltekit-superforms"
 	import { zod4 } from "sveltekit-superforms/adapters"
+	import Plus from "@lucide/svelte/icons/plus"
 
 	import type { ItemCreate } from "$lib/client"
 	import { ItemsService } from "$lib/client"
@@ -50,14 +51,16 @@
 	})
 
 	const fd = form.form
+	const errors = form.errors
 </script>
 
 <Dialog.Root bind:open>
 	<Dialog.Trigger>
 		{#snippet child({ props })}
-			<Button {...props} class="my-4">
-				Add Item
-			</Button>
+		<Button {...props} class="my-4">
+			<Plus class="mr-2" />
+			Add Item
+		</Button>
 		{/snippet}
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-md">
@@ -74,7 +77,9 @@
 							<Input {...props} bind:value={$fd.title} onblur={() => form.validate("title")} placeholder="Title" type="text" />
 						{/snippet}
 					</Form.Control>
-					<Form.FieldErrors />
+					{#if $errors.title}
+						<p class="text-xs font-medium text-destructive">{$errors.title[0]}</p>
+					{/if}
 				</Form.Field>
 
 				<Form.Field {form} name="description">
@@ -84,7 +89,9 @@
 							<Input {...props} bind:value={$fd.description} placeholder="Description" type="text" />
 						{/snippet}
 					</Form.Control>
-					<Form.FieldErrors />
+					{#if $errors.description}
+						<p class="text-xs font-medium text-destructive">{$errors.description[0]}</p>
+					{/if}
 				</Form.Field>
 			</div>
 

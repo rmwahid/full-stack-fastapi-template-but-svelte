@@ -15,17 +15,17 @@
 	import { getInitials } from "$lib/utils";
 
 	interface Props {
-		user: UserPublic | undefined | null;
+		user: UserPublic | undefined | null
 	}
 
-	let { user }: Props = $props();
+	let { user }: Props = $props()
 
-	const { logout } = createAuth();
-	const sidebar = useSidebar();
+	const { logout } = createAuth()
+	const sidebar = useSidebar()
 
 	function handleMenuClick() {
 		if (sidebar.isMobile) {
-			sidebar.setOpenMobile(false);
+			sidebar.setOpenMobile(false)
 		}
 	}
 </script>

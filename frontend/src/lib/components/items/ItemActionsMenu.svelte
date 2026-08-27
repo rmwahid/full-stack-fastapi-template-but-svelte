@@ -7,18 +7,18 @@
 	import EditItem from "./EditItem.svelte";
 
 	interface Props {
-		item: ItemPublic;
-		class?: string;
+		item: ItemPublic
+		class?: string
 	}
 
-	let { item, class: className }: Props = $props();
+	let { item, class: className }: Props = $props()
 
-	let menuOpen = $state(false);
-	let editOpen = $state(false);
-	let deleteOpen = $state(false);
+	let menuOpen = $state(false)
+	let editOpen = $state(false)
+	let deleteOpen = $state(false)
 
 	function closeMenu() {
-		menuOpen = false;
+		menuOpen = false
 	}
 </script>
 
@@ -39,8 +39,8 @@
 			<DropdownMenu.Item
 				variant="destructive"
 				onclick={() => {
-					closeMenu();
-					deleteOpen = true;
+					closeMenu()
+					deleteOpen = true
 				}}
 			>
 				Delete Item
@@ -48,10 +48,10 @@
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 
-	<!-- Key by item id: table rows are keyed by index, so without this the
-	     reused component would keep the previous row's form state. -->
+	<!-- Key by item id so the dialogs are scoped to this item, even when the
+	     table refetches and rows move between positions. -->
 	{#key item.id}
-		<EditItem bind:open={editOpen} {item} onsuccess={closeMenu} />
-		<DeleteItem bind:open={deleteOpen} id={item.id} onsuccess={closeMenu} />
+		<EditItem bind:open={editOpen} {item} onSuccess={closeMenu} />
+		<DeleteItem bind:open={deleteOpen} id={item.id} onSuccess={closeMenu} />
 	{/key}
 </div>

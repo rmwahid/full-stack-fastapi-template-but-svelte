@@ -52,6 +52,7 @@
 	})
 
 	const fd = form.form
+	const errors = form.errors
 </script>
 
 <svelte:head>
@@ -68,21 +69,25 @@
 		<Form.Field {form} name="new_password">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>New password</Form.Label>
-					<PasswordInput {...props} bind:value={$fd.new_password} data-testid="new-password-input" placeholder="New password" />
+					<Form.Label>New Password</Form.Label>
+					<PasswordInput {...props} bind:value={$fd.new_password} data-testid="new-password-input" placeholder="New Password" />
 				{/snippet}
 			</Form.Control>
-			<Form.FieldErrors class="text-xs" />
+			{#if $errors.new_password}
+					<p class="text-xs font-medium text-destructive">{$errors.new_password[0]}</p>
+				{/if}
 		</Form.Field>
 
 		<Form.Field {form} name="confirm_password">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>Confirm password</Form.Label>
-					<PasswordInput {...props} bind:value={$fd.confirm_password} data-testid="confirm-password-input" placeholder="Confirm password" />
+					<Form.Label>Confirm Password</Form.Label>
+					<PasswordInput {...props} bind:value={$fd.confirm_password} data-testid="confirm-password-input" placeholder="Confirm Password" />
 				{/snippet}
 			</Form.Control>
-			<Form.FieldErrors class="text-xs" />
+			{#if $errors.confirm_password}
+					<p class="text-xs font-medium text-destructive">{$errors.confirm_password[0]}</p>
+				{/if}
 		</Form.Field>
 
 		{#if !token}

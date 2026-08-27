@@ -1,13 +1,21 @@
 ﻿<script lang="ts">
 	import { useSidebar } from "$lib/components/ui/sidebar";
-	import { setMode } from "mode-watcher";
+	import { setMode, userPrefersMode } from "mode-watcher";
 	import Monitor from "@lucide/svelte/icons/monitor";
 	import Moon from "@lucide/svelte/icons/moon";
 	import Sun from "@lucide/svelte/icons/sun";
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import { SidebarMenuItem, SidebarMenuButton } from "$lib/components/ui/sidebar";
 
-	const sidebar = useSidebar();
+	const sidebar = useSidebar()
+
+	const icon = $derived(
+		userPrefersMode.current === "system"
+			? Monitor
+			: userPrefersMode.current === "dark"
+				? Moon
+				: Sun,
+	)
 </script>
 
 <SidebarMenuItem>
@@ -15,11 +23,7 @@
 		<DropdownMenu.Trigger>
 			{#snippet child({ props })}
 				<SidebarMenuButton {...props} tooltipContent="Appearance" data-testid="theme-button">
-					{#if sidebar.isMobile}
-						<Sun class="size-4" />
-					{:else}
-						<Moon class="size-4 text-muted-foreground" />
-					{/if}
+					<svelte:component this={icon} class="text-muted-foreground size-4" />
 					<span>Appearance</span>
 					<span class="sr-only">Toggle theme</span>
 				</SidebarMenuButton>

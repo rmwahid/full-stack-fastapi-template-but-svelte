@@ -6,7 +6,6 @@
 
 	import type { UpdatePassword } from "$lib/client"
 	import { UsersService } from "$lib/client"
-	import * as Card from "$lib/components/ui/card"
 	import * as Form from "$lib/components/ui/form"
 	import LoadingButton from "$lib/components/ui/loading-button.svelte"
 	import PasswordInput from "$lib/components/ui/password-input.svelte"
@@ -69,48 +68,48 @@
 	)
 
 	const fd = form.form
+	const errors = form.errors
 </script>
 
-<Card.Root>
-	<Card.Header>
-		<Card.Title>Change Password</Card.Title>
-		<Card.Description>Update your password</Card.Description>
-	</Card.Header>
-	<Card.Content>
-		<form method="POST" use:form.enhance class="flex flex-col gap-4">
-			<Form.Field {form} name="current_password">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Current Password <span class="text-destructive">*</span></Form.Label>
-						<PasswordInput {...props} bind:value={$fd.current_password} data-testid="current-password-input" placeholder="Current password" />
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors class="text-xs" />
-			</Form.Field>
+<div class="max-w-md">
+	<h3 class="py-4 text-lg font-semibold">Change Password</h3>
+	<form method="POST" use:form.enhance class="flex flex-col gap-4">
+		<Form.Field {form} name="current_password">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Current Password</Form.Label>
+					<PasswordInput {...props} bind:value={$fd.current_password} data-testid="current-password-input" placeholder="••••••••" />
+				{/snippet}
+			</Form.Control>
+			{#if $errors.current_password}
+				<p class="text-xs font-medium text-destructive">{$errors.current_password[0]}</p>
+			{/if}
+		</Form.Field>
 
-			<Form.Field {form} name="new_password">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Set New Password <span class="text-destructive">*</span></Form.Label>
-						<PasswordInput {...props} bind:value={$fd.new_password} data-testid="new-password-input" placeholder="New password" />
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors class="text-xs" />
-			</Form.Field>
+		<Form.Field {form} name="new_password">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>New Password</Form.Label>
+					<PasswordInput {...props} bind:value={$fd.new_password} data-testid="new-password-input" placeholder="••••••••" />
+				{/snippet}
+			</Form.Control>
+			{#if $errors.new_password}
+				<p class="text-xs font-medium text-destructive">{$errors.new_password[0]}</p>
+			{/if}
+		</Form.Field>
 
-			<Form.Field {form} name="confirm_password">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Confirm New Password <span class="text-destructive">*</span></Form.Label>
-						<PasswordInput {...props} bind:value={$fd.confirm_password} data-testid="confirm-password-input" placeholder="Confirm new password" />
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors class="text-xs" />
-			</Form.Field>
+		<Form.Field {form} name="confirm_password">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Confirm Password</Form.Label>
+					<PasswordInput {...props} bind:value={$fd.confirm_password} data-testid="confirm-password-input" placeholder="••••••••" />
+				{/snippet}
+			</Form.Control>
+			{#if $errors.confirm_password}
+				<p class="text-xs font-medium text-destructive">{$errors.confirm_password[0]}</p>
+			{/if}
+		</Form.Field>
 
-			<div class="flex justify-end">
-				<LoadingButton type="submit" loading={$mutation.isPending}>Update Password</LoadingButton>
-			</div>
-		</form>
-	</Card.Content>
-</Card.Root>
+		<LoadingButton type="submit" class="self-start" loading={$mutation.isPending}>Update Password</LoadingButton>
+	</form>
+</div>

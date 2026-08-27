@@ -11,22 +11,22 @@
 	} from "$lib/components/ui/sidebar";
 
 	export type SidebarItem = {
-		icon: Component;
-		title: string;
-		path: string;
-	};
-
-	interface Props {
-		items: SidebarItem[];
+		icon: Component
+		title: string
+		path: string
 	}
 
-	let { items }: Props = $props();
+	interface Props {
+		items: SidebarItem[]
+	}
 
-	const sidebar = useSidebar();
+	let { items }: Props = $props()
+
+	const sidebar = useSidebar()
 
 	function handleMenuClick() {
 		if (sidebar.isMobile) {
-			sidebar.setOpenMobile(false);
+			sidebar.setOpenMobile(false)
 		}
 	}
 </script>

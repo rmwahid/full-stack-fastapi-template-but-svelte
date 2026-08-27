@@ -9,12 +9,12 @@
 	import { handleError } from "$lib/utils"
 
 	interface Props {
-		id: string;
-		open?: boolean;
-		onsuccess?: () => void;
+		id: string
+		open?: boolean
+		onSuccess?: () => void
 	}
 
-	let { id, open = $bindable(false), onsuccess }: Props = $props();
+	let { id, open = $bindable(false), onSuccess }: Props = $props()
 
 	const queryClient = useQueryClient()
 
@@ -25,16 +25,21 @@
 		onSuccess: () => {
 			showSuccessToast("The item was deleted successfully")
 			open = false
-			onsuccess?.()
+			onSuccess?.()
 		},
 		onError: (error) => handleError(error, showErrorToast),
 		onSettled: () => queryClient.invalidateQueries(),
 	})
+
+	function handleSubmit(event: SubmitEvent) {
+		event.preventDefault()
+		$mutation.mutate(id)
+	}
 </script>
 
 <Dialog.Root bind:open>
 	<Dialog.Content class="sm:max-w-md">
-		<form onsubmit={(e) => { e.preventDefault(); $mutation.mutate(id) }}>
+		<form onsubmit={handleSubmit}>
 			<Dialog.Header>
 				<Dialog.Title>Delete Item</Dialog.Title>
 				<Dialog.Description>

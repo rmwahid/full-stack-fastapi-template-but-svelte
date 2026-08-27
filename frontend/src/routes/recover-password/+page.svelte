@@ -42,10 +42,11 @@
 	})
 
 	const fd = form.form
+	const errors = form.errors
 </script>
 
 <svelte:head>
-	<title>Password Recovery - FastAPI Template</title>
+	<title>Recover Password - FastAPI Template</title>
 </svelte:head>
 
 <AuthLayout>
@@ -67,10 +68,12 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Email</Form.Label>
-						<Input {...props} bind:value={$fd.email} data-testid="email-input" placeholder="Email" type="email" />
+						<Input {...props} bind:value={$fd.email} data-testid="email-input" placeholder="user@example.com" type="email" />
 					{/snippet}
 				</Form.Control>
-				<Form.FieldErrors class="text-xs" />
+				{#if $errors.email}
+					<p class="text-xs font-medium text-destructive">{$errors.email[0]}</p>
+				{/if}
 			</Form.Field>
 			<LoadingButton type="submit" loading={$recoverPassword.isPending}>Continue</LoadingButton>
 		</form>

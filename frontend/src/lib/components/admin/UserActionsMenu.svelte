@@ -7,18 +7,18 @@
 	import EditUser from "./EditUser.svelte";
 
 	interface Props {
-		user: UserPublic & { isCurrentUser?: boolean };
-		class?: string;
+		user: UserPublic & { isCurrentUser?: boolean }
+		class?: string
 	}
 
-	let { user, class: className }: Props = $props();
+	let { user, class: className }: Props = $props()
 
-	let menuOpen = $state(false);
-	let editOpen = $state(false);
-	let deleteOpen = $state(false);
+	let menuOpen = $state(false)
+	let editOpen = $state(false)
+	let deleteOpen = $state(false)
 
 	function closeMenu() {
-		menuOpen = false;
+		menuOpen = false
 	}
 </script>
 
@@ -33,23 +33,23 @@
 			{/snippet}
 		</DropdownMenu.Trigger>
 		<DropdownMenu.Content align="end">
-			<DropdownMenu.Item onclick={() => (editOpen = true)}>Edit User</DropdownMenu.Item>
-			<DropdownMenu.Item
-				variant="destructive"
-				onclick={() => {
-					closeMenu();
-					deleteOpen = true;
-				}}
-			>
-				Delete User
-			</DropdownMenu.Item>
+		<DropdownMenu.Item onclick={() => (editOpen = true)}>Edit User</DropdownMenu.Item>
+		<DropdownMenu.Item
+			variant="destructive"
+			onclick={() => {
+				closeMenu()
+				deleteOpen = true
+			}}
+		>
+			Delete User
+		</DropdownMenu.Item>
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 
-	<!-- Key by user id: table rows are keyed by index, so without this the
-	     reused component would keep the previous row's form state. -->
+	<!-- Key by user id so the dialogs are scoped to this user, even when the
+	     table refetches and rows move between positions. -->
 	{#key user.id}
-		<EditUser bind:open={editOpen} {user} onsuccess={closeMenu} />
-		<DeleteUser bind:open={deleteOpen} id={user.id} email={user.email} onsuccess={closeMenu} />
+		<EditUser bind:open={editOpen} {user} onSuccess={closeMenu} />
+		<DeleteUser bind:open={deleteOpen} id={user.id} email={user.email} onSuccess={closeMenu} />
 	{/key}
 </div>

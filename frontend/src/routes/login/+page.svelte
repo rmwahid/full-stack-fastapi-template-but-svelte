@@ -35,6 +35,7 @@
 	})
 
 	const fd = form.form
+	const errors = form.errors
 </script>
 
 <svelte:head>
@@ -55,7 +56,9 @@
 						<Input {...props} bind:value={$fd.username} data-testid="email-input" placeholder="user@example.com" type="email" />
 					{/snippet}
 				</Form.Control>
-				<Form.FieldErrors class="text-xs" />
+				{#if $errors.username}
+					<p class="text-xs font-medium text-destructive">{$errors.username[0]}</p>
+				{/if}
 			</Form.Field>
 
 			<Form.Field {form} name="password">
@@ -70,7 +73,9 @@
 						<PasswordInput {...props} bind:value={$fd.password} data-testid="password-input" placeholder="Password" />
 					{/snippet}
 				</Form.Control>
-				<Form.FieldErrors class="text-xs" />
+				{#if $errors.password}
+					<p class="text-xs font-medium text-destructive">{$errors.password[0]}</p>
+				{/if}
 			</Form.Field>
 
 			<LoadingButton type="submit" loading={$loginMutation.isPending}>Log In</LoadingButton>

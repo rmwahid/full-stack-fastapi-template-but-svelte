@@ -1,10 +1,9 @@
-﻿<script lang="ts">
+<script lang="ts">
 	import { createMutation } from "@tanstack/svelte-query"
 	import { goto } from "$app/navigation"
 
 	import { UsersService } from "$lib/client"
-	import Button from "$lib/components/ui/button/button.svelte";
-	import * as Card from "$lib/components/ui/card"
+	import Button from "$lib/components/ui/button/button.svelte"
 	import * as Dialog from "$lib/components/ui/dialog"
 	import LoadingButton from "$lib/components/ui/loading-button.svelte"
 	import { clearAccessToken } from "$lib/token"
@@ -24,27 +23,29 @@
 		},
 		onError: (error) => handleError(error, showErrorToast),
 	})
+
+	function handleSubmit(event: SubmitEvent) {
+		event.preventDefault()
+		$mutation.mutate()
+	}
 </script>
 
-<Card.Root class="border-destructive">
-	<Card.Header>
-		<Card.Title>Delete Account</Card.Title>
-		<Card.Description>
-			Permanently delete your account and all of its contents. This action cannot be undone.
-		</Card.Description>
-	</Card.Header>
-	<Card.Footer class="justify-end">
-		<Button variant="destructive" onclick={() => (isOpen = true)}>Delete Account</Button>
-	</Card.Footer>
-</Card.Root>
+<div class="mt-4 max-w-md rounded-lg border border-destructive/50 p-4">
+	<h3 class="font-semibold text-destructive">Delete Account</h3>
+	<p class="mt-1 text-sm text-muted-foreground">
+		Permanently delete your account and all associated data.
+	</p>
+	<Button variant="destructive" class="mt-3" onclick={() => (isOpen = true)}>Delete Account</Button>
+</div>
 
 <Dialog.Root bind:open={isOpen}>
 	<Dialog.Content class="sm:max-w-md">
-		<form onsubmit={(e) => { e.preventDefault(); $mutation.mutate() }}>
+		<form onsubmit={handleSubmit}>
 			<Dialog.Header>
-				<Dialog.Title>Delete Account</Dialog.Title>
+				<Dialog.Title>Confirmation Required</Dialog.Title>
 				<Dialog.Description>
-					All your data will be permanently removed. This action cannot be undone. Are you sure?
+					All your account data will be <strong>permanently deleted.</strong> If you are sure,
+					please click <strong>"Confirm"</strong> to proceed. This action cannot be undone.
 				</Dialog.Description>
 			</Dialog.Header>
 			<Dialog.Footer class="mt-4">
@@ -53,7 +54,7 @@
 						<Button {...props} variant="outline" disabled={$mutation.isPending}>Cancel</Button>
 					{/snippet}
 				</Dialog.Close>
-				<LoadingButton variant="destructive" type="submit" loading={$mutation.isPending}>Delete</LoadingButton>
+				<LoadingButton variant="destructive" type="submit" loading={$mutation.isPending}>Confirm</LoadingButton>
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>

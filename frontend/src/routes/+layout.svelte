@@ -16,6 +16,11 @@
 <ModeWatcher defaultMode="dark" lightClassNames={["light"]} darkClassNames={["dark"]} />
 
 <QueryClientProvider client={queryClient}>
+	{#if import.meta.env.DEV}
+		{#await import("@tanstack/svelte-query-devtools") then { SvelteQueryDevtools }}
+			<SvelteQueryDevtools client={queryClient} />
+		{/await}
+	{/if}
 	<Toaster richColors closeButton />
 	{@render children()}
 </QueryClientProvider>

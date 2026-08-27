@@ -24,16 +24,12 @@
 	type FormData = z.infer<typeof schema>
 
 	interface Props {
-		user: UserPublic;
-		open?: boolean;
-		onsuccess?: () => void;
+		user: UserPublic
+		open?: boolean
+		onSuccess?: () => void
 	}
 
-	let {
-		user,
-		open = $bindable(false),
-		onsuccess,
-	}: Props = $props();
+	let { user, open = $bindable(false), onSuccess }: Props = $props()
 
 	const queryClient = useQueryClient()
 
@@ -43,7 +39,7 @@
 		onSuccess: () => {
 			showSuccessToast("User updated successfully")
 			open = false
-			onsuccess?.()
+			onSuccess?.()
 		},
 		onError: (error) => handleError(error, showErrorToast),
 		onSettled: () => {
@@ -80,6 +76,7 @@
 	)
 
 	const fd = form.form
+	const errors = form.errors
 </script>
 
 <Dialog.Root bind:open>
@@ -97,7 +94,9 @@
 							<Input {...props} bind:value={$fd.full_name} placeholder="Full name" type="text" />
 						{/snippet}
 					</Form.Control>
-					<Form.FieldErrors />
+					{#if $errors.full_name}
+						<p class="text-xs font-medium text-destructive">{$errors.full_name[0]}</p>
+					{/if}
 				</Form.Field>
 
 				<Form.Field {form} name="email">
@@ -107,7 +106,9 @@
 							<Input {...props} bind:value={$fd.email} placeholder="Email" type="email" />
 						{/snippet}
 					</Form.Control>
-					<Form.FieldErrors />
+					{#if $errors.email}
+						<p class="text-xs font-medium text-destructive">{$errors.email[0]}</p>
+					{/if}
 				</Form.Field>
 
 				<label class="flex items-center gap-2 text-sm">

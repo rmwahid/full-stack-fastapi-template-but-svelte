@@ -9,14 +9,14 @@
 	import SidebarUser from "./SidebarUser.svelte";
 	import * as Sidebar from "$lib/components/ui/sidebar";
 
-	const auth = createAuth();
+	const auth = createAuth()
 	const userStore = auth.user
 	const currentUser = $derived($userStore.data)
 
 	const baseItems: SidebarItem[] = [
 		{ icon: Home, title: "Dashboard", path: "/" },
 		{ icon: Briefcase, title: "Items", path: "/items" },
-	];
+	]
 
 	const items = $derived(
 		currentUser?.is_superuser

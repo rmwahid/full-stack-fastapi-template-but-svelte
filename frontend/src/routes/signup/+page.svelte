@@ -45,6 +45,7 @@
 	})
 
 	const fd = form.form
+	const errors = form.errors
 </script>
 
 <svelte:head>
@@ -52,26 +53,30 @@
 </svelte:head>
 
 <AuthLayout>
-	<h1 class="mb-4 text-center text-2xl font-bold">Sign Up</h1>
+	<h1 class="mb-4 text-center text-2xl font-bold">Create an account</h1>
 	<form method="POST" use:form.enhance class="flex flex-col gap-4">
 		<Form.Field {form} name="full_name">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label>Full name</Form.Label>
-					<Input {...props} bind:value={$fd.full_name} data-testid="full-name-input" placeholder="Full name" type="text" />
+					<Form.Label>Full Name</Form.Label>
+					<Input {...props} bind:value={$fd.full_name} data-testid="full-name-input" placeholder="User" type="text" />
 				{/snippet}
 			</Form.Control>
-			<Form.FieldErrors class="text-xs" />
+			{#if $errors.full_name}
+					<p class="text-xs font-medium text-destructive">{$errors.full_name[0]}</p>
+				{/if}
 		</Form.Field>
 
 		<Form.Field {form} name="email">
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label>Email</Form.Label>
-					<Input {...props} bind:value={$fd.email} data-testid="email-input" placeholder="Email" type="email" />
+					<Input {...props} bind:value={$fd.email} data-testid="email-input" placeholder="user@example.com" type="email" />
 				{/snippet}
 			</Form.Control>
-			<Form.FieldErrors class="text-xs" />
+			{#if $errors.email}
+					<p class="text-xs font-medium text-destructive">{$errors.email[0]}</p>
+				{/if}
 		</Form.Field>
 
 		<Form.Field {form} name="password">
@@ -81,7 +86,9 @@
 					<PasswordInput {...props} bind:value={$fd.password} data-testid="password-input" placeholder="Password" />
 				{/snippet}
 			</Form.Control>
-			<Form.FieldErrors class="text-xs" />
+			{#if $errors.password}
+					<p class="text-xs font-medium text-destructive">{$errors.password[0]}</p>
+				{/if}
 		</Form.Field>
 
 		<Form.Field {form} name="confirm_password">
@@ -91,7 +98,9 @@
 					<PasswordInput {...props} bind:value={$fd.confirm_password} data-testid="confirm-password-input" placeholder="Confirm Password" />
 				{/snippet}
 			</Form.Control>
-			<Form.FieldErrors class="text-xs" />
+			{#if $errors.confirm_password}
+					<p class="text-xs font-medium text-destructive">{$errors.confirm_password[0]}</p>
+				{/if}
 		</Form.Field>
 
 		<LoadingButton type="submit" loading={$signUpMutation.isPending}>Sign Up</LoadingButton>

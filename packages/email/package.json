@@ -1,0 +1,20 @@
+{
+	"name": "emails",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "bse dev",
+		"lint": "biome check --write --unsafe --no-errors-on-unmatched --files-ignore-unknown=true ./",
+		"export": "bun run export.ts",
+		"build": "email build"
+	},
+	"dependencies": {
+		"@better-svelte-email/components": "^2.0.0",
+		"@better-svelte-email/server": "^2.0.0",
+		"svelte": "^5.14.3"
+	},
+	"devDependencies": {
+		"@better-svelte-email/cli": "^2.0.0"
+	}
+}

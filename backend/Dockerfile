@@ -12,6 +12,7 @@ RUN bun install
 COPY ./frontend /app/frontend
 
 ARG VITE_API_URL=
+ENV VITE_API_URL=$VITE_API_URL
 
 RUN bun run build
 
@@ -50,6 +51,9 @@ COPY ./backend/scripts /app/backend/scripts
 COPY ./backend/pyproject.toml ./backend/alembic.ini /app/backend/
 
 COPY ./backend/app /app/backend/app
+
+# Remove any stale frontend artifacts from the build context before overlaying the fresh SPA build
+RUN rm -rf /app/backend/app/frontend
 
 COPY --from=frontend-build /app/backend/app/frontend /app/backend/app/frontend
 
